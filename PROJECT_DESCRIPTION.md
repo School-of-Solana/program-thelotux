@@ -1,6 +1,6 @@
 # Project Description
 
-**Deployed Frontend URL:** [Add your deployment URL here]
+**Deployed Frontend URL:** https://program-thelotux.vercel.app/
 
 **Solana Program ID:** `9Vu2g7S8oxYbk3JmHzjQXdoHguwEwPgVDq6KxAKAGWiW`
 
