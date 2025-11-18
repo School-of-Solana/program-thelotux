@@ -287,6 +287,7 @@ export default function RafflePlatform() {
       const rafflePubkey = new PublicKey(buyRaffleAddress);
 
       // Fetch fresh raffle data to get current ticket count
+      // @ts-ignore
       const raffleAccount = await program.account.raffle.fetch(rafflePubkey);
       const ticketNumber = raffleAccount.totalTicketsSold;
 
@@ -348,6 +349,7 @@ export default function RafflePlatform() {
       const program = getProgram(provider);
       const rafflePubkey = new PublicKey(drawRaffleAddress);
 
+      // @ts-ignore
       const raffleAccount = await program.account.raffle.fetch(rafflePubkey);
 
       console.log("Raffle state before draw:", {
