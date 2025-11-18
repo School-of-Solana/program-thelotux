@@ -1,0 +1,469 @@
+{
+  "address": "9Vu2g7S8oxYbk3JmHzjQXdoHguwEwPgVDq6KxAKAGWiW",
+  "metadata": {
+    "name": "raffle_platform",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "buy_ticket",
+      "docs": [
+        "Purchases a ticket for an active raffle",
+        "",
+        "Transfers SOL from buyer to raffle PDA and creates a ticket account.",
+        "Automatically transitions raffle to Ended state if max tickets reached."
+      ],
+      "discriminator": [
+        11,
+        24,
+        17,
+        193,
+        168,
+        116,
+        164,
+        169
+      ],
+      "accounts": [
+        {
+          "name": "raffle",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  97,
+                  102,
+                  102,
+                  108,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "raffle.creator",
+                "account": "Raffle"
+              },
+              {
+                "kind": "account",
+                "path": "raffle.raffle_id",
+                "account": "Raffle"
+              }
+            ]
+          }
+        },
+        {
+          "name": "ticket",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  116,
+                  105,
+                  99,
+                  107,
+                  101,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "raffle"
+              },
+              {
+                "kind": "account",
+                "path": "raffle.total_tickets_sold",
+                "account": "Raffle"
+              }
+            ]
+          }
+        },
+        {
+          "name": "buyer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "create_raffle",
+      "docs": [
+        "Creates a new raffle with specified parameters",
+        "",
+        "# Arguments",
+        "* `raffle_id` - Unique identifier for the raffle (managed by creator)",
+        "* `ticket_price` - Price per ticket in lamports",
+        "* `max_tickets` - Maximum number of tickets available",
+        "* `end_time` - Unix timestamp when raffle ends"
+      ],
+      "discriminator": [
+        226,
+        206,
+        159,
+        34,
+        213,
+        207,
+        98,
+        126
+      ],
+      "accounts": [
+        {
+          "name": "raffle",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  97,
+                  102,
+                  102,
+                  108,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "creator"
+              },
+              {
+                "kind": "arg",
+                "path": "raffle_id"
+              }
+            ]
+          }
+        },
+        {
+          "name": "creator",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "raffle_id",
+          "type": "u64"
+        },
+        {
+          "name": "ticket_price",
+          "type": "u64"
+        },
+        {
+          "name": "max_tickets",
+          "type": "u32"
+        },
+        {
+          "name": "end_time",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "draw_winner",
+      "docs": [
+        "Draws a winner for an ended raffle and distributes prizes",
+        "",
+        "Uses slot-based randomness to select a winning ticket.",
+        "Distributes 90% to winner and 10% to creator."
+      ],
+      "discriminator": [
+        250,
+        103,
+        118,
+        147,
+        219,
+        235,
+        169,
+        220
+      ],
+      "accounts": [
+        {
+          "name": "raffle",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  114,
+                  97,
+                  102,
+                  102,
+                  108,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "raffle.creator",
+                "account": "Raffle"
+              },
+              {
+                "kind": "account",
+                "path": "raffle.raffle_id",
+                "account": "Raffle"
+              }
+            ]
+          }
+        },
+        {
+          "name": "creator",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Raffle",
+      "discriminator": [
+        143,
+        133,
+        63,
+        173,
+        138,
+        10,
+        142,
+        200
+      ]
+    },
+    {
+      "name": "Ticket",
+      "discriminator": [
+        41,
+        228,
+        24,
+        165,
+        78,
+        90,
+        235,
+        200
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidTicketPrice",
+      "msg": "Ticket price must be greater than zero"
+    },
+    {
+      "code": 6001,
+      "name": "InvalidMaxTickets",
+      "msg": "Max tickets must be greater than zero"
+    },
+    {
+      "code": 6002,
+      "name": "InvalidEndTime",
+      "msg": "End time must be in the future"
+    },
+    {
+      "code": 6003,
+      "name": "RaffleNotActive",
+      "msg": "Raffle is not active"
+    },
+    {
+      "code": 6004,
+      "name": "RaffleSoldOut",
+      "msg": "Raffle has sold out"
+    },
+    {
+      "code": 6005,
+      "name": "RaffleNotEnded",
+      "msg": "Raffle has not ended yet"
+    },
+    {
+      "code": 6006,
+      "name": "NoTicketsSold",
+      "msg": "No tickets have been sold"
+    },
+    {
+      "code": 6007,
+      "name": "Unauthorized",
+      "msg": "Unauthorized operation"
+    },
+    {
+      "code": 6008,
+      "name": "CannotCancelWithTickets",
+      "msg": "Cannot cancel raffle with tickets sold"
+    },
+    {
+      "code": 6009,
+      "name": "MathOverflow",
+      "msg": "Math overflow occurred"
+    },
+    {
+      "code": 6010,
+      "name": "InvalidWinningTicket",
+      "msg": "Invalid winning ticket provided"
+    }
+  ],
+  "types": [
+    {
+      "name": "Raffle",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "creator",
+            "docs": [
+              "Creator of the raffle"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "ticket_price",
+            "docs": [
+              "Price per ticket in lamports"
+            ],
+            "type": "u64"
+          },
+          {
+            "name": "max_tickets",
+            "docs": [
+              "Maximum number of tickets"
+            ],
+            "type": "u32"
+          },
+          {
+            "name": "end_time",
+            "docs": [
+              "Unix timestamp when raffle ends"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "total_tickets_sold",
+            "docs": [
+              "Current number of tickets sold"
+            ],
+            "type": "u32"
+          },
+          {
+            "name": "ticket_buyers",
+            "docs": [
+              "List of all ticket buyers (stores buyer pubkey for each ticket)"
+            ],
+            "type": {
+              "vec": "pubkey"
+            }
+          },
+          {
+            "name": "winner",
+            "docs": [
+              "Winner's public key (None until drawn)"
+            ],
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "state",
+            "docs": [
+              "Current state of the raffle"
+            ],
+            "type": {
+              "defined": {
+                "name": "RaffleState"
+              }
+            }
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          },
+          {
+            "name": "raffle_id",
+            "docs": [
+              "Unique raffle identifier"
+            ],
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "RaffleState",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Ended"
+          },
+          {
+            "name": "Completed"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Ticket",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "raffle",
+            "docs": [
+              "Associated raffle public key"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "buyer",
+            "docs": [
+              "Buyer/owner of the ticket"
+            ],
+            "type": "pubkey"
+          },
+          {
+            "name": "ticket_number",
+            "docs": [
+              "Ticket number (0-indexed)"
+            ],
+            "type": "u32"
+          },
+          {
+            "name": "purchase_time",
+            "docs": [
+              "Unix timestamp when ticket was purchased"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "bump",
+            "docs": [
+              "PDA bump seed"
+            ],
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ]
+}
